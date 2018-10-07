@@ -1,11 +1,11 @@
-OBJS = da.o stack.o testFile.o maze.o cell.o
+OBJS = da.o stack.o maze.o cell.o options.o 
 OOPTS = -Wall -Wextra -g -std=c99 -c 
 LOPTS = -Wall -Wextra -g 
 
-all : project0
+all : amaze
 
-project0 : $(OBJS)
-	gcc $(LOPTS) $(OBJS) -o project0
+amaze : $(OBJS)
+	gcc $(LOPTS) $(OBJS) -o amaze
 
 da.o : da.h da.c
 	gcc $(OOPTS) da.c
@@ -19,14 +19,14 @@ cell.o : cell.h cell.c
 maze.o : maze.h maze.c
 	gcc $(OOPTS) maze.c
 
-testFile.o : testFile.c da.h stack.h
-	gcc $(OOPTS) testFile.c
+options.o : options.c da.h stack.h maze.h cell.h
+	gcc $(OOPTS) options.c
 
-test : project0
-	./project0
+test : amaze
+	./amaze
 
-valgrind : project0
-	valgrind project0
+valgrind : amaze
+	valgrind amaze
 
 clean:
-	rm -f $(OBJS) project0
+	rm -f $(OBJS) amaze

@@ -9,7 +9,7 @@ File author: Connor Adams
 
 struct cell
 {
-	int xLoc, yLoc, value;
+	int xLoc, yLoc, value, state; // for State 0 == normal, -1 == start, 1 == end
 	int *walls; // The walls are stored in an array, North, East, South, West - 1 == exists | 0 == none
 };
 
@@ -27,15 +27,9 @@ CELL *newCELL(void)
 }
 
 // Sets the x, y coords for the given cell
-void setPos(CELL cell, int x, int y)
+void setCELL(CELL *cell, int x, int y, int value)
 {
 	cell->xLoc = x;
 	cell->yLoc = y;
+	cell->value = value;
 }
-
-// Sets the given cell's value
-void setVal(CELL cell, int val)
-{
-	cell->value = val;
-}
-

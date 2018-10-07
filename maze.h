@@ -4,8 +4,8 @@ The purpose of this file is relatively simple, it is a header
 File author: Connor Adams
 */
 
-#ifndef __STACK_INCLUDED__
-#define __STACK_INCLUDED__
+#ifndef __MAZE_INCLUDED__
+#define __MAZE_INCLUDED__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +13,8 @@ File author: Connor Adams
 
 typedef struct maze MAZE;
 
-extern MAZE *newMAZE(void);
+extern MAZE *newMAZE();
+extern void buildMAZE(MAZE*, int, int);
+
 
 #endif
