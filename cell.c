@@ -20,11 +20,12 @@ CELL *newCELL(int x, int y)
 	CELL *newCELL = (CELL*)malloc(sizeof(CELL*));
 	newCELL->walls = (int*)malloc(sizeof(int*)*4);
 	for (int i = 0; i < 4; i++)
-		newCELL->walls[i] = 1; 
+		newCELL->walls[i] = 1;
 	newCELL->xLoc = x;
 	newCELL->yLoc = y;
 	newCELL->value = -1;
 	newCELL->visited = false;
+	printf("{%d, %d} ", x, y);
 	return newCELL;
 }
 
@@ -70,10 +71,9 @@ int yCell(CELL *cell)
 void removeWall(CELL *firstCELL, CELL *secondCELL)
 {
 	int xDiff = firstCELL->xLoc - secondCELL->xLoc, yDiff = firstCELL->yLoc - secondCELL->yLoc;
-	printf("Removing at %d %d ", xDiff, yDiff);
-	if (xDiff != 0)
+	if (yDiff != 0)
 	{
-		if (xDiff == 1) // Left of the first
+		if (yDiff == 1) // Left of the first
 		{
 			firstCELL->walls[3] = 0;
 			secondCELL->walls[1] = 0;
@@ -88,17 +88,16 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 	}
 	else
 	{
-		if (yDiff == 1) // Above the first
+		if (xDiff == 1) // Above the first
 		{
-			firstCELL->walls[2] = 0;
-			secondCELL->walls[0] = 0;
-
+			firstCELL->walls[0] = 0;
+			secondCELL->walls[2] = 0;
 			printf("Above \n");
 		}
 		else // Below the first
 		{
-			firstCELL->walls[0] = 0;
-			secondCELL->walls[2] = 0;
+			firstCELL->walls[2] = 0;
+			secondCELL->walls[0] = 0;
 			printf("Below \n");
 		}
 	}
@@ -107,13 +106,14 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 // Returns the walls as a char* N-E-S-W
 char* wallsCELL(CELL *cell)
 {
-	char* walls = (char*)malloc(sizeof(char*)*4);
+	char* walls = (char*)malloc(sizeof(char*)*5);
 	for (int i = 0; i < 4; i++)
 	{
 		if (cell->walls[i] == 1)
 			walls[i] = '1';
 		else
-			walls[0] = '0';
+			walls[i] = '0';
 	}
+	walls[5] = '\0';
 	return walls;
 }

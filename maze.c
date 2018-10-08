@@ -58,6 +58,7 @@ void displayMAZE(MAZE *maze)
 	int x = 0, y = 0;
 	for (x = 0; x < maze->rows; x++)
 	{
+		// Print top wall
 		for (y = 0; y < maze->columns; y++)
 		{
 			if (x == 0)
@@ -66,6 +67,7 @@ void displayMAZE(MAZE *maze)
 				printf("-");
 		}
 		printf("\n");
+		// Populate each cell and add walls
 		for (y = 0; y < maze->columns; y++)
 		{
 			if (y == 0 && x != 0) // Left bound wall
@@ -79,7 +81,7 @@ void displayMAZE(MAZE *maze)
 				printf(" %d ", cellVal); // Display the val if it exists
 			else
 				printf("   "); // If not display blank space
-			if (walls[1] == '1') // If the right wall exists display it
+			if ((walls[1] == '1' && y != maze->columns - 1) || (y == maze->columns - 1 && x != maze->rows - 1)) // If the right wall exists display it
 				printf("|");
 			else
 				printf(" ");
@@ -92,18 +94,16 @@ void displayMAZE(MAZE *maze)
 				printf("----");
 			else
 			{
-				printf("--");
-				char* walls = wallsCELL(maze->cellHolder[x][y]);
-				if (walls[0] == '1')
-					printf("-");
-				else
-					printf(" ");
 				printf("-");
+				char* walls = wallsCELL(maze->cellHolder[x][y]);
+				if (walls[2] == '1')
+					printf("---");
+				else
+					printf("   ");
 				free(walls);
 			}
 			if (y == maze->columns - 1)
 				printf("-");
-
 		}
 	}
 	printf("\n");
@@ -111,6 +111,8 @@ void displayMAZE(MAZE *maze)
 
 void gatherCandidates(MAZE *maze, STACK *candidates, int x, int y)
 {
+	while (sizeSTACK(candidates) > 0)
+		pop(candidates);
 	if (x > 0 && visitStateCELL(maze->cellHolder[x - 1][y]) == false) // Above
 		push(candidates, maze->cellHolder[x - 1][y]);
 	if (y > 0 && visitStateCELL(maze->cellHolder[x][y - 1]) == false) // Left
@@ -119,7 +121,7 @@ void gatherCandidates(MAZE *maze, STACK *candidates, int x, int y)
 		push(candidates, maze->cellHolder[x][y + 1]);
 	if (x < maze->rows - 1 && visitStateCELL(maze->cellHolder[x + 1][y]) == false) // Down
 		push(candidates, maze->cellHolder[x + 1][y]);
-	printf("%d candidates", sizeSTACK(candidates));
+	printf("\n%d candidates", sizeSTACK(candidates));
 }
 
 // Randomly removes walls to make it into a maze
@@ -147,26 +149,27 @@ void generateMAZE(MAZE *maze)
 				currentCELL = pop(traversalOrder);
 				gatherCandidates(maze, candidates, xCell(currentCELL), yCell(currentCELL));
 				size = sizeSTACK(candidates);
-				printf(":New size %d\n", size);
 			}
 			else
 			{
-				printf("No more candidates");
+				printf("\n\nNo more candidates\n\n");
 				break;
 			}
 		}
 		// Generate which one is next randomly
 		int nextNum = random() % sizeSTACK(candidates);
 		int pops = sizeSTACK(candidates) - nextNum;
+		// Pop until the cell is reached
 		for (i = 0; i < pops; i++)
 		{
 			nexCELL = pop(candidates);
 		}
+		removeWall(currentCELL, nexCELL);
+
 		for (i = 0; i < sizeSTACK(candidates); i++)
 		{
 			pop(candidates);
 		}
-		removeWall(currentCELL, nexCELL);
 		traversed++;
 	}
 }
