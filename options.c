@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include "maze.h"
 
 /* options */
 int seed = 1; // The seed the random generator will use
@@ -39,8 +40,6 @@ void Fatal(char *fmt, ...)
 
 	exit(-1);
 }
-
-/* only -oXXX  or -o XXX options */
 
 int ProcessOptions(int argc, char **argv)
 {
@@ -89,6 +88,10 @@ int ProcessOptions(int argc, char **argv)
 			break;
 		case 'c':
 			printf("Command to create detected\n");
+			MAZE* newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]));
+			saveMAZE(newMA, argv[argIndex+2]);
+			displayMAZE(newMA);
+			//free(newMA);
 			argsUsed += 3;
 			break;
 		case 'r':

@@ -13,8 +13,9 @@ File author: Connor Adams
 
 typedef struct maze MAZE;
 
-extern MAZE *newMAZE();
-extern void buildMAZE(MAZE*, int, int);
-
+extern MAZE *newMAZE(int, int);
+extern void saveMAZE(MAZE*, char*);
+extern void displayMAZE(MAZE*);
+extern void generateMAZE(MAZE*);
 
 #endif

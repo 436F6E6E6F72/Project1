@@ -10,11 +10,17 @@ File author: Connor Adams
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 
 typedef struct cell CELL;
 
-extern CELL *newCELL(void);
+extern CELL *newCELL(int, int);
 extern void setCELL(CELL*, int, int, int);
-
-
+extern int valueCELL(CELL*);
+extern char* wallsCELL(CELL*);
+extern bool visitStateCELL(CELL*);
+extern void visitedCELL(CELL*);
+extern int xCell(CELL*);
+extern int yCell(CELL*);
+extern void removeWall(CELL*, CELL*);
 #endif
