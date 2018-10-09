@@ -25,7 +25,6 @@ CELL *newCELL(int x, int y)
 	newCELL->yLoc = y;
 	newCELL->value = -1;
 	newCELL->visited = false;
-	printf("{%d, %d} ", x, y);
 	return newCELL;
 }
 
@@ -35,6 +34,15 @@ void setCELL(CELL *cell, int x, int y, int value)
 	cell->xLoc = x;
 	cell->yLoc = y;
 	cell->value = value;
+}
+
+// Sets the maze walls, mainly for reading in data
+void setWallsCELL(CELL *cell, char *wallRaw)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		cell->walls[i] = wallRaw[i] - '0';
+	}
 }
 
 // Returns the value
@@ -77,13 +85,13 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 		{
 			firstCELL->walls[3] = 0;
 			secondCELL->walls[1] = 0;
-			printf("Left \n");
+			//printf("Left \n");
 		}
 		else // Right of the first
 		{
 			firstCELL->walls[1] = 0;
 			secondCELL->walls[3] = 0;
-			printf("Right \n");
+			//printf("Right \n");
 		}
 	}
 	else
@@ -92,13 +100,13 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 		{
 			firstCELL->walls[0] = 0;
 			secondCELL->walls[2] = 0;
-			printf("Above \n");
+			//printf("Above \n");
 		}
 		else // Below the first
 		{
 			firstCELL->walls[2] = 0;
 			secondCELL->walls[0] = 0;
-			printf("Below \n");
+			//printf("Below \n");
 		}
 	}
 }

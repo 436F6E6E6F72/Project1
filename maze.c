@@ -40,16 +40,56 @@ void saveMAZE(MAZE *maze, char *output)
 	printf("Finished saving\n");
 }
 
-// Sets the generation seed   TODO: IMPLEMENT THIS FULLY
-void setSeedMAZE(MAZE *maze, int seed)
-{
-	maze->seed = seed;
-}
-
 // Just inserts a cell into the maze
 void insertCELL(MAZE *maze, CELL *cell, int x, int y)
 {
 	maze->cellHolder[x][y] = (void*)cell;
+}
+
+// Reads a given made file
+MAZE *readMAZE(char *input)
+{
+	MAZE *rMAZE;
+	FILE *fptr = fopen(input, "r");
+	printf("Starting read\n");
+	int rows = -1, cols = -1, x = 0, y = 0;
+	char buf[10];
+	if (fptr) {
+		printf("Opened\n");
+		while (fscanf(fptr, "%s", buf) != EOF)
+		{
+			if (rows == -1)
+			{
+				rows = atoi(buf);
+			}
+			else if (cols == -1)
+			{
+				cols = atoi(buf);
+				rMAZE = newMAZE(rows, cols, 1);
+			}
+			else
+			{
+				insertCELL(rMAZE, newCELL(x, y), x, y);
+				setWallsCELL(rMAZE->cellHolder[x][y], buf);
+				if (y < cols - 1)
+					y++;
+				else
+				{
+					y = 0;
+					x++;
+				}
+			}
+		}
+		fclose(fptr);
+	}
+	saveMAZE(rMAZE, "test2.data");
+	return rMAZE;
+}
+
+// Sets the generation seed
+void setSeedMAZE(MAZE *maze, int seed)
+{
+	maze->seed = seed;
 }
 
 // Displays the maze
@@ -121,12 +161,13 @@ void gatherCandidates(MAZE *maze, STACK *candidates, int x, int y)
 		push(candidates, maze->cellHolder[x][y + 1]);
 	if (x < maze->rows - 1 && visitStateCELL(maze->cellHolder[x + 1][y]) == false) // Down
 		push(candidates, maze->cellHolder[x + 1][y]);
-	printf("\n%d candidates", sizeSTACK(candidates));
+	//printf("\n%d candidates", sizeSTACK(candidates));
 }
 
 // Randomly removes walls to make it into a maze
 void generateMAZE(MAZE *maze)
 {
+	srandom(maze->seed);
 	int traversed = 0, i = 0;
 	STACK *traversalOrder = newSTACK(), *candidates = newSTACK();
 	CELL *currentCELL = maze->cellHolder[0][0], *nexCELL = currentCELL;
@@ -145,7 +186,7 @@ void generateMAZE(MAZE *maze)
 		{
 			if (sizeSTACK(traversalOrder) > 0)
 			{
-				printf("POPBACK");
+				//printf("POPBACK");
 				currentCELL = pop(traversalOrder);
 				gatherCandidates(maze, candidates, xCell(currentCELL), yCell(currentCELL));
 				size = sizeSTACK(candidates);
@@ -175,7 +216,7 @@ void generateMAZE(MAZE *maze)
 }
 
 // Creates a new MAZE struct
-MAZE *newMAZE(int rows, int cols)
+MAZE *newMAZE(int rows, int cols, int seed)
 {
 	MAZE *newMAZE = (MAZE*)malloc(sizeof(MAZE));
 	newMAZE->rows = rows;
@@ -185,18 +226,19 @@ MAZE *newMAZE(int rows, int cols)
 	newMAZE->cellHolder = malloc(sizeof(void**) * rows);
 	for (int x = 0; x < rows; x++)
 	{
-		printf("%d", x);
+		//printf("%d", x);
 		// Create each row
 		newMAZE->cellHolder[x] = malloc(sizeof(void*) * cols);
 		for (int y = 0; y < cols; y++)
 		{
 			// Populate it
 			insertCELL(newMAZE, newCELL(x, y), x, y);
-			printf("%d ", y);
+			//printf("%d ", y);
 		}
-		printf("\n");
+		//printf("\n");
 	}
 	printf("\nCreated maze\n");
+	newMAZE->seed = seed;
 	generateMAZE(newMAZE);
 	return newMAZE;
 }

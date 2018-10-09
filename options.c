@@ -88,20 +88,23 @@ int ProcessOptions(int argc, char **argv)
 			break;
 		case 'c':
 			printf("Command to create detected\n");
-			MAZE* newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]));
+			MAZE* newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
 			saveMAZE(newMA, argv[argIndex+2]);
 			displayMAZE(newMA);
-			//free(newMA);
+			free(newMA);
 			argsUsed += 3;
 			break;
 		case 'r':
-			printf("Command to input seed detected\n");
+			//printf("Command to input seed detected\n");
 			seed = atoi(arg);
-			printf("Seed is %d\n", seed);
-			argsUsed += 1;
+			//printf("Seed is %d\n", seed);
+			argsUsed += 1; // TODO: VERIFY THESE INCREMENTS
 			break;
 		case 'd':
 			printf("Command to draw detected\n");
+			MAZE *rMAZE = readMAZE(argv[argIndex]);
+			displayMAZE(rMAZE);
+			free(rMAZE);
 			argsUsed += 1;
 			break;
 		case 'v':

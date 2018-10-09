@@ -20,6 +20,7 @@ extern int valueCELL(CELL*);
 extern char* wallsCELL(CELL*);
 extern bool visitStateCELL(CELL*);
 extern void visitedCELL(CELL*);
+extern void setWallsCELL(CELL*, char*);
 extern int xCell(CELL*);
 extern int yCell(CELL*);
 extern void removeWall(CELL*, CELL*);
