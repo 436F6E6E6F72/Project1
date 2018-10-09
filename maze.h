@@ -19,5 +19,6 @@ extern MAZE *readMAZE(char*);
 extern void displayMAZE(MAZE*);
 extern void generateMAZE(MAZE*);
 extern MAZE *solveMAZE(MAZE*);
+extern void freeMAZE(MAZE*);
 
 #endif

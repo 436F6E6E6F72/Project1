@@ -83,19 +83,20 @@ int ProcessOptions(int argc, char **argv)
 		*/
 
 		case 's':
-			printf("Command to solve detected\n");
-			MAZE *maze = readMAZE(argv[argIndex]);
-			maze = solveMAZE(maze);
+			//printf("Command to solve detected\n");
+			MAZE *solvedMA = readMAZE(argv[argIndex]);
+			solvedMA = solveMAZE(solvedMA);
+			displayMAZE(solvedMA);
+			saveMAZE(solvedMA, argv[argIndex + 1]);
+			freeMAZE(solvedMA);
 			argsUsed += 2;
 			break;
 		case 'c':
-			printf("Command to create detected\n");
-			MAZE* newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
+			//printf("Command to create detected\n");
+			MAZE *newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
 			saveMAZE(newMA, argv[argIndex+2]);
 			displayMAZE(newMA);
-			MAZE *solvedMA = solveMAZE(newMA);
-			displayMAZE(solvedMA);
-			free(newMA);
+			freeMAZE(newMA);
 			argsUsed += 3;
 			break;
 		case 'r':
@@ -105,7 +106,7 @@ int ProcessOptions(int argc, char **argv)
 			argsUsed += 1; // TODO: VERIFY THESE INCREMENTS
 			break;
 		case 'd':
-			printf("Command to draw detected\n");
+			//printf("Command to draw detected\n");
 			MAZE *rMAZE = readMAZE(argv[argIndex]);
 			displayMAZE(rMAZE);
 			free(rMAZE);

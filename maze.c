@@ -22,7 +22,7 @@ struct maze
 void saveMAZE(MAZE *maze, char *output)
 {
 	FILE *fptr = fopen( output, "w+");
-	printf("Starting save\n");
+	//printf("Starting save\n");
 	fprintf(fptr, "%d %d\n", maze->rows, maze->columns);
 
 	int x = 0, y = 0;
@@ -38,7 +38,7 @@ void saveMAZE(MAZE *maze, char *output)
 
 	}
 	fclose(fptr);
-	printf("Finished saving\n");
+	//printf("Finished saving\n");
 }
 
 // Just inserts a cell into the maze
@@ -52,11 +52,11 @@ MAZE *readMAZE(char *input)
 {
 	MAZE *rMAZE;
 	FILE *fptr = fopen(input, "r");
-	printf("Starting read\n");
+	//printf("Starting read\n");
 	int rows = -1, cols = -1, x = 0, y = 0;
 	char buf[10];
 	if (fptr) {
-		printf("Opened\n");
+		//printf("Opened\n");
 		while (fscanf(fptr, "%s", buf) != EOF)
 		{
 			if (rows == -1)
@@ -83,7 +83,7 @@ MAZE *readMAZE(char *input)
 		}
 		fclose(fptr);
 	}
-	saveMAZE(rMAZE, "test2.data");
+	//saveMAZE(rMAZE, "test2.data");
 	return rMAZE;
 }
 
@@ -268,7 +268,7 @@ void generateMAZE(MAZE *maze)
 			}
 			else
 			{
-				printf("\n\nNo more candidates\n\n");
+				//printf("\n\nNo more candidates\n\n");
 				break;
 			}
 		}
@@ -290,13 +290,28 @@ void generateMAZE(MAZE *maze)
 	}
 }
 
+// frees the maze
+void freeMAZE(MAZE* maze)
+{
+	/*
+	for(int x = 0; x < maze->rows; x++)
+	{
+		for (int y = 0; y < maze->columns; x++)
+		{
+			free(maze->cellHolder[x][y]);
+			//freeCELL(maze->cellHolder[x][y]);
+		}
+	}*/
+	free(maze);
+}
+
 // Creates a new MAZE struct
 MAZE *newMAZE(int rows, int cols, int seed)
 {
 	MAZE *newMAZE = (MAZE*)malloc(sizeof(MAZE));
 	newMAZE->rows = rows;
 	newMAZE->columns = cols;
-	printf("Creating a maze of size %d x %d\n", rows, cols);
+	//printf("Creating a maze of size %d x %d\n", rows, cols);
 	// Create a 1-D array of row pointers
 	newMAZE->cellHolder = malloc(sizeof(void**) * rows);
 	for (int x = 0; x < rows; x++)
@@ -312,7 +327,7 @@ MAZE *newMAZE(int rows, int cols, int seed)
 		}
 		//printf("\n");
 	}
-	printf("\nCreated maze\n");
+	//printf("\nCreated maze\n");
 	newMAZE->seed = seed;
 	generateMAZE(newMAZE);
 	return newMAZE;
