@@ -30,7 +30,10 @@ void saveMAZE(MAZE *maze, char *output)
 	{
 		for (y = 0; y < maze->columns; y++)
 		{
-			char* returnVal = wallsCELL((CELL*)maze->cellHolder[x][y]);
+			char* returnVal = (char*)malloc(sizeof(char*) * 5);
+			for (int i = 0; i < 4; i++)
+				returnVal[i] = wallsCELL((CELL*)maze->cellHolder[x][y])[i];
+			//returnVal[4] = valueCELL(maze->cellHolder[x][y]) + '0';
 			fprintf(fptr, "%s ", returnVal);
 			free(returnVal);
 		}
@@ -72,6 +75,7 @@ MAZE *readMAZE(char *input)
 			{
 				insertCELL(rMAZE, newCELL(x, y), x, y);
 				setWallsCELL(rMAZE->cellHolder[x][y], buf);
+				//setValueCELL(rMAZE->cellHolder[x][y], (buf[5] == 'a')? -1 : buf[5]);
 				if (y < cols - 1)
 					y++;
 				else
@@ -140,9 +144,9 @@ MAZE *solveMAZE(MAZE *maze)
 			inspectedCELL = (CELL*)dequeue(traversalQUEUE);
 			setValueCELL(inspectedCELL, counter % 10);
 			if (xCell(inspectedCELL) == maze->rows - 1 && yCell(inspectedCELL) == maze->columns - 1) // Final cell
-				{
-					traversing = false;
-				}
+			{
+				traversing = false;
+			}
 			char *wallsArr = wallsCELL(inspectedCELL);
 			for (int j = 0; j < 4; j++)
 			{
