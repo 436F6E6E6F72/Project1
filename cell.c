@@ -63,6 +63,12 @@ bool visitStateCELL(CELL *cell)
 	return cell->visited;
 }
 
+// Externally set a cell's values
+void setValueCELL(CELL *cell, int val)
+{
+	cell->value = val;
+}
+
 // Returns the x val of the cell
 int xCell(CELL *cell)
 {

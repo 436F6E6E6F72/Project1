@@ -8,6 +8,7 @@ File author: Connor Adams
 #include "maze.h"
 #include "cell.h"
 #include "stack.h"
+#include "queue.h"
 
 long int random(void);
 void srandom(unsigned int seed);
@@ -84,6 +85,80 @@ MAZE *readMAZE(char *input)
 	}
 	saveMAZE(rMAZE, "test2.data");
 	return rMAZE;
+}
+
+// Returns a cell in a maze based off of a start and a direction
+CELL *getCELLdir(MAZE *maze, CELL *start, int dir)
+{
+	// dir: 0 == north, 1 == east, 2 == south, 3 == West
+	CELL *returnVal;
+	switch(dir)
+	{
+		case 0:
+		{
+			returnVal = maze->cellHolder[xCell(start) -1][yCell(start)];
+			break;
+		}
+		case 1:
+		{
+			returnVal =  maze->cellHolder[xCell(start)][yCell(start) + 1];
+			break;
+		}
+		case 2:
+		{
+			returnVal =  maze->cellHolder[xCell(start) + 1][yCell(start)];
+			break;
+		}
+		case 3:
+		{
+			returnVal =  maze->cellHolder[xCell(start)][yCell(start) - 1];
+			break;
+		}
+		default:
+			{
+				printf("Hit default case");
+				return 0;
+			}
+	}
+	return returnVal;
+}
+
+// Solves the MAZE
+MAZE *solveMAZE(MAZE *maze)
+{
+	bool traversing = true;
+	int counter = 0;
+	QUEUE *traversalQUEUE = newQUEUE();
+	enqueue(traversalQUEUE, maze->cellHolder[0][0]);
+	CELL *inspectedCELL;
+	while (traversing && counter < maze->columns * maze->rows - 2)
+	{
+		//	printf("%d ", counter);
+		int numLoops = sizeQUEUE(traversalQUEUE);
+		for (int i = 0; i < numLoops; i++)
+		{
+			inspectedCELL = (CELL*)dequeue(traversalQUEUE);
+			setValueCELL(inspectedCELL, counter % 10);
+			if (xCell(inspectedCELL) == maze->rows - 1 && yCell(inspectedCELL) == maze->columns - 1) // Final cell
+				{
+					traversing = false;
+				}
+			char *wallsArr = wallsCELL(inspectedCELL);
+			for (int j = 0; j < 4; j++)
+			{
+				if (wallsArr[j] == '0')
+				{
+					if (valueCELL(getCELLdir(maze, inspectedCELL, j)) == -1)
+					{
+						enqueue(traversalQUEUE, getCELLdir(maze, inspectedCELL, j));
+					}
+				}
+			}
+			free(wallsArr);
+		}
+		counter++;
+	}
+	return maze;
 }
 
 // Sets the generation seed

@@ -84,6 +84,8 @@ int ProcessOptions(int argc, char **argv)
 
 		case 's':
 			printf("Command to solve detected\n");
+			MAZE *maze = readMAZE(argv[argIndex]);
+			maze = solveMAZE(maze);
 			argsUsed += 2;
 			break;
 		case 'c':
@@ -91,6 +93,8 @@ int ProcessOptions(int argc, char **argv)
 			MAZE* newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
 			saveMAZE(newMA, argv[argIndex+2]);
 			displayMAZE(newMA);
+			MAZE *solvedMA = solveMAZE(newMA);
+			displayMAZE(solvedMA);
 			free(newMA);
 			argsUsed += 3;
 			break;

@@ -1,5 +1,5 @@
 /*
-Cell Header File 
+Cell Header File
 The purpose of this file is relatively simple, it is a header
 File author: Connor Adams
 */
@@ -24,4 +24,5 @@ extern void setWallsCELL(CELL*, char*);
 extern int xCell(CELL*);
 extern int yCell(CELL*);
 extern void removeWall(CELL*, CELL*);
+extern void setValueCELL(CELL*, int);
 #endif
