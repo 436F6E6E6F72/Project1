@@ -19,6 +19,7 @@ CELL *newCELL(int x, int y)
 {
 	CELL *newCELL = (CELL*)malloc(sizeof(CELL*));
 	newCELL->walls = (int*)malloc(sizeof(int*)*4);
+	// It is possible to store the walls in 2 slots but it makes solving annoying
 	for (int i = 0; i < 4; i++)
 		newCELL->walls[i] = 1;
 	newCELL->xLoc = x;
