@@ -278,6 +278,8 @@ void generateMAZE(MAZE *maze)
 				currentCELL = pop(traversalOrder);
 				gatherCandidates(maze, candidates, xCell(currentCELL), yCell(currentCELL));
 				size = sizeSTACK(candidates);
+				if (size > 0)
+					push(traversalOrder, currentCELL);
 			}
 			else
 			{

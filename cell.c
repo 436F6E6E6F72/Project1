@@ -115,6 +115,8 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 			//printf("Below \n");
 		}
 	}
+	visitedCELL(firstCELL);
+	visitedCELL(secondCELL);
 }
 
 // Frees the cell's data
