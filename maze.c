@@ -30,13 +30,13 @@ void saveMAZE(MAZE *maze, char *output)
 	{
 		for (y = 0; y < maze->columns; y++)
 		{
-			char* returnVal = (char*)malloc(sizeof(char*) * 3);
-			for (int i = 0; i < 2; i++)
+			char* returnVal = (char*)malloc(sizeof(char*) * 5);
+			for (int i = 0; i < 4; i++)
 				returnVal[i] = wallsCELL((CELL*)maze->cellHolder[x][y])[i];
 			if (valueCELL(maze->cellHolder[x][y]) > -1)
-				returnVal[2] = valueCELL(maze->cellHolder[x][y]) + '0';
+				returnVal[4] = valueCELL(maze->cellHolder[x][y]) + '0';
 			else
-				returnVal[2] = 'a';
+				returnVal[4] = 'a';
 			fprintf(fptr, "%s ", returnVal);
 			free(returnVal);
 		}
@@ -78,10 +78,10 @@ MAZE *readMAZE(char *input)
 			{
 				insertCELL(rMAZE, newCELL(x, y), x, y);
 				setWallsCELL(rMAZE->cellHolder[x][y], buf);
-				if (buf[2] == 'a')
+				if (buf[4] == 'a')
 					setValueCELL(rMAZE->cellHolder[x][y], -1);
 				else
-					setValueCELL(rMAZE->cellHolder[x][y], buf[2] - '0');
+					setValueCELL(rMAZE->cellHolder[x][y], buf[4] - '0');
 				if (y < cols - 1)
 					y++;
 				else
@@ -156,7 +156,7 @@ MAZE *solveMAZE(MAZE *maze)
 				traversing = false;
 			}
 			char *wallsArr = wallsCELL(inspectedCELL);
-			for (int j = 0; j < 2; j++)
+			for (int j = 0; j < 4; j++)
 			{
 				if (wallsArr[j] == '0')
 				{
@@ -209,7 +209,7 @@ void displayMAZE(MAZE *maze)
 				printf(" %d ", cellVal); // Display the val if it exists
 			else
 				printf("   "); // If not display blank space
-			if ((walls[0] == '1' && y != maze->columns - 1) || (y == maze->columns - 1 && x != maze->rows - 1)) // If the right wall exists display it
+			if ((walls[1] == '1' && y != maze->columns - 1) || (y == maze->columns - 1 && x != maze->rows - 1)) // If the right wall exists display it
 				printf("|");
 			else
 				printf(" ");
@@ -224,7 +224,7 @@ void displayMAZE(MAZE *maze)
 			{
 				printf("-");
 				char* walls = wallsCELL(maze->cellHolder[x][y]);
-				if (walls[1] == '1')
+				if (walls[2] == '1')
 					printf("---");
 				else
 					printf("   ");

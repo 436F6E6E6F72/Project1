@@ -18,8 +18,8 @@ struct cell
 CELL *newCELL(int x, int y)
 {
 	CELL *newCELL = (CELL*)malloc(sizeof(CELL*));
-	newCELL->walls = (int*)malloc(sizeof(int*)*2);
-	for (int i = 0; i < 2; i++)
+	newCELL->walls = (int*)malloc(sizeof(int*)*4);
+	for (int i = 0; i < 4; i++)
 		newCELL->walls[i] = 1;
 	newCELL->xLoc = x;
 	newCELL->yLoc = y;
@@ -39,7 +39,7 @@ void setCELL(CELL *cell, int x, int y, int value)
 // Sets the maze walls, mainly for reading in data
 void setWallsCELL(CELL *cell, char *wallRaw)
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		cell->walls[i] = wallRaw[i] - '0';
 	}
@@ -89,12 +89,14 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 	{
 		if (yDiff == 1) // Left of the first
 		{
-			secondCELL->walls[0] = 0;
+			firstCELL->walls[3] = 0;
+			secondCELL->walls[1] = 0;
 			//printf("Left \n");
 		}
 		else // Right of the first
 		{
-			firstCELL->walls[0] = 0;
+			firstCELL->walls[1] = 0;
+			secondCELL->walls[3] = 0;
 			//printf("Right \n");
 		}
 	}
@@ -102,12 +104,14 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 	{
 		if (xDiff == 1) // Above the first
 		{
-			secondCELL->walls[1] = 0;
+			firstCELL->walls[0] = 0;
+			secondCELL->walls[2] = 0;
 			//printf("Above \n");
 		}
 		else // Below the first
 		{
-			firstCELL->walls[1] = 0;
+			firstCELL->walls[2] = 0;
+			secondCELL->walls[0] = 0;
 			//printf("Below \n");
 		}
 	}
@@ -122,16 +126,17 @@ void freeCELL(CELL *cell)
 	//free(cell);
 }
 
-// Returns the walls as a char* East-South
+// Returns the walls as a char* N-E-S-W
 char* wallsCELL(CELL *cell)
 {
-	char* walls = (char*)malloc(sizeof(char*)*2);
-	for (int i = 0; i < 2; i++)
+	char* walls = (char*)malloc(sizeof(char*)*5);
+	for (int i = 0; i < 4; i++)
 	{
 		if (cell->walls[i] == 1)
 			walls[i] = '1';
 		else
 			walls[i] = '0';
 	}
+	walls[5] = '\0';
 	return walls;
 }
