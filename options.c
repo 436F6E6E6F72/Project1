@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "maze.h"
+#include <stdbool.h>
 
 /* options */
 int seed = 1; // The seed the random generator will use
@@ -47,6 +48,8 @@ int ProcessOptions(int argc, char **argv)
 	int argsUsed;
 	char *arg;
 
+	bool displayAtEnd = false; int argcDisp = 0;
+
 	argIndex = 1;
 
 	while (argIndex < argc && *argv[argIndex] == '-')
@@ -84,41 +87,48 @@ int ProcessOptions(int argc, char **argv)
 
 		case 's':
 		{
-			//printf("Command to solve detected\n");
 			MAZE *solvedMA = readMAZE(argv[argIndex]);
 			solvedMA = solveMAZE(solvedMA);
-			//displayMAZE(solvedMA);
 			saveMAZE(solvedMA, argv[argIndex + 1]);
-			displayMAZE(solvedMA);
-			freeMAZE(solvedMA);
+			free(solvedMA);
+			//freeMAZE(solvedMA);
 			argsUsed += 2;
 			break;
 		}
 		case 'c':
 		{
-			//printf("Command to create detected\n");
 			MAZE *newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
-			saveMAZE(newMA, argv[argIndex+2]);
 			//displayMAZE(newMA);
-			freeMAZE(newMA);
+			saveMAZE(newMA, argv[argIndex+2]);
+			free(newMA);
+			//freeMAZE(newMA);
 			argsUsed += 3;
 			break;
 		}
 		case 'r':
 		{
-			//printf("Command to input seed detected\n");
 			seed = atoi(arg);
-			//printf("Seed is %d\n", seed);
 			argsUsed += 1; // TODO: VERIFY THESE INCREMENTS
 			break;
 		}
 		case 'd':
 		{
-			//printf("Command to draw detected\n");
-			MAZE *rMAZE = readMAZE(argv[argIndex]);
-			displayMAZE(rMAZE);
-			free(rMAZE);
+			if (argc > argIndex + 2)
+			{
+				argcDisp = argIndex;
+				displayAtEnd = true;
+			}
+			else
+			{
+				MAZE *rMAZE = readMAZE(argv[argIndex]);
+				if (rMAZE != 0)
+				{
+					displayMAZE(rMAZE);
+					free(rMAZE);
+				}
+			}
 			argsUsed += 1;
+
 			break;
 		}
 		case 'v':
@@ -132,9 +142,16 @@ int ProcessOptions(int argc, char **argv)
 			exit(-1);
 		}
 		}
-
 		argIndex += argsUsed;
 	}
-
+	if (displayAtEnd)
+	{
+		MAZE *rMAZE = readMAZE(argv[argcDisp]);
+		if (rMAZE != 0)
+		{
+			displayMAZE(rMAZE);
+			free(rMAZE);
+		}
+	}
 	return argIndex;
 }

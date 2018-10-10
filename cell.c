@@ -121,7 +121,7 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 void freeCELL(CELL *cell)
 {
 	free(cell->walls);
-	free(cell);
+	//free(cell);
 }
 
 // Returns the walls as a char* N-E-S-W

@@ -33,7 +33,10 @@ void saveMAZE(MAZE *maze, char *output)
 			char* returnVal = (char*)malloc(sizeof(char*) * 5);
 			for (int i = 0; i < 4; i++)
 				returnVal[i] = wallsCELL((CELL*)maze->cellHolder[x][y])[i];
-			//returnVal[4] = valueCELL(maze->cellHolder[x][y]) + '0';
+			if (valueCELL(maze->cellHolder[x][y]) > -1)
+				returnVal[4] = valueCELL(maze->cellHolder[x][y]) + '0';
+			else
+				returnVal[4] = 'a';
 			fprintf(fptr, "%s ", returnVal);
 			free(returnVal);
 		}
@@ -75,7 +78,10 @@ MAZE *readMAZE(char *input)
 			{
 				insertCELL(rMAZE, newCELL(x, y), x, y);
 				setWallsCELL(rMAZE->cellHolder[x][y], buf);
-				//setValueCELL(rMAZE->cellHolder[x][y], (buf[5] == 'a')? -1 : buf[5]);
+				if (buf[4] == 'a')
+					setValueCELL(rMAZE->cellHolder[x][y], -1);
+				else
+					setValueCELL(rMAZE->cellHolder[x][y], buf[4] - '0');
 				if (y < cols - 1)
 					y++;
 				else
@@ -87,6 +93,8 @@ MAZE *readMAZE(char *input)
 		}
 		fclose(fptr);
 	}
+	else
+		return 0;
 	//saveMAZE(rMAZE, "test2.data");
 	return rMAZE;
 }
@@ -162,6 +170,7 @@ MAZE *solveMAZE(MAZE *maze)
 		}
 		counter++;
 	}
+	freeQUEUE(traversalQUEUE);
 	return maze;
 }
 
@@ -292,20 +301,32 @@ void generateMAZE(MAZE *maze)
 		}
 		traversed++;
 	}
+	freeSTACK(traversalOrder);
 }
 
 // frees the maze
 void freeMAZE(MAZE* maze)
 {
-	/*
-	for(int x = 0; x < maze->rows; x++)
+
+	for (int i = 0; i < maze->rows; i++)
 	{
-		for (int y = 0; y < maze->columns; x++)
-		{
-			free(maze->cellHolder[x][y]);
-			//freeCELL(maze->cellHolder[x][y]);
-		}
-	}*/
+		//for (int j = 0; j < maze->columns; j++)
+		//{
+			//free(maze->cellHolder[i][j]);
+			//freeCELL(maze->cellHolder[i][j]);
+		//}
+		free(maze->cellHolder[i]);
+	}
+
+	free(maze->cellHolder);
+	//for(int x = 0; x < maze->rows; x++)
+	//{
+	//	for (int y = 0; y < maze->columns; x++)
+	//	{
+	//		//free(maze->cellHolder[x][y]);
+	//		freeCELL(maze->cellHolder[x][y]);
+	//	}
+	//}
 	free(maze);
 }
 
