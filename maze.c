@@ -24,24 +24,21 @@ void saveMAZE(MAZE *maze, char *output)
 	FILE *fptr = fopen( output, "w+");
 	//printf("Starting save\n");
 	fprintf(fptr, "%d %d\n", maze->rows, maze->columns);
-
+	char *wallsResult = NULL;
 	int x = 0, y = 0;
 	for (x = 0; x < maze->rows; x++)
 	{
 		for (y = 0; y < maze->columns; y++)
 		{
-			char* returnVal = (char*)malloc(sizeof(char*) * 5);
-			for (int i = 0; i < 4; i++)
-				returnVal[i] = wallsCELL((CELL*)maze->cellHolder[x][y])[i];
+			wallsResult = wallsCELL((CELL*)maze->cellHolder[x][y]);
+			fprintf(fptr, "%s", wallsResult);
 			if (valueCELL(maze->cellHolder[x][y]) > -1)
-				returnVal[4] = valueCELL(maze->cellHolder[x][y]) + '0';
+				fprintf(fptr, "%c ", valueCELL(maze->cellHolder[x][y]) + '0');
 			else
-				returnVal[4] = 'a';
-			fprintf(fptr, "%s ", returnVal);
-			free(returnVal);
+				fprintf(fptr, "a ");
+			free(wallsResult);
 		}
 		fprintf(fptr, "\n");
-
 	}
 	fclose(fptr);
 	//printf("Finished saving\n");
@@ -56,9 +53,8 @@ void insertCELL(MAZE *maze, CELL *cell, int x, int y)
 // Reads a given made file
 MAZE *readMAZE(char *input)
 {
-	MAZE *rMAZE;
+	MAZE *rMAZE = NULL;
 	FILE *fptr = fopen(input, "r");
-	//printf("Starting read\n");
 	int rows = -1, cols = -1, x = 0, y = 0;
 	char buf[10];
 	if (fptr) {
@@ -76,6 +72,7 @@ MAZE *readMAZE(char *input)
 			}
 			else
 			{
+				freeCELL(rMAZE->cellHolder[x][y]);
 				insertCELL(rMAZE, newCELL(x, y), x, y);
 				setWallsCELL(rMAZE->cellHolder[x][y], buf);
 				if (buf[4] == 'a')
@@ -95,7 +92,6 @@ MAZE *readMAZE(char *input)
 	}
 	else
 		return 0;
-	//saveMAZE(rMAZE, "test2.data");
 	return rMAZE;
 }
 
@@ -170,6 +166,9 @@ MAZE *solveMAZE(MAZE *maze)
 		}
 		counter++;
 	}
+	while (sizeQUEUE(traversalQUEUE) > 0)
+		dequeue(traversalQUEUE);
+	setQUEUEfree(traversalQUEUE, free);
 	freeQUEUE(traversalQUEUE);
 	return maze;
 }
@@ -203,7 +202,6 @@ void displayMAZE(MAZE *maze)
 			else if (y == 0 && x == 0)
 				printf(" ");
 			char* walls = wallsCELL(maze->cellHolder[x][y]); // Pull the wall vals
-			//printf("'%s'", walls);
 			int cellVal = valueCELL(maze->cellHolder[x][y]); // Pull the cell val
 			if (cellVal > -1)
 				printf(" %d ", cellVal); // Display the val if it exists
@@ -257,7 +255,10 @@ void generateMAZE(MAZE *maze)
 {
 	srandom(maze->seed);
 	int traversed = 0, i = 0;
-	STACK *traversalOrder = newSTACK(), *candidates = newSTACK();
+	STACK *traversalOrder = newSTACK();
+	STACK *candidates = newSTACK();
+	setSTACKfree(traversalOrder, free);
+	setSTACKfree(candidates, free);
 	CELL *currentCELL = maze->cellHolder[0][0], *nexCELL = currentCELL;
 	while (traversed < (maze->rows * maze->columns) - 1)
 	{
@@ -292,7 +293,7 @@ void generateMAZE(MAZE *maze)
 		int pops = sizeSTACK(candidates) - nextNum;
 		// Pop until the cell is reached
 		for (i = 0; i < pops; i++)
-		{
+		{		
 			nexCELL = pop(candidates);
 		}
 		removeWall(currentCELL, nexCELL);
@@ -303,7 +304,15 @@ void generateMAZE(MAZE *maze)
 		}
 		traversed++;
 	}
+	while (sizeSTACK(candidates) > 0)
+		pop(candidates);
+	while (sizeSTACK(traversalOrder) > 0)
+		pop(traversalOrder);
+
+	freeSTACK(candidates);
+	//free(candidates);
 	freeSTACK(traversalOrder);
+	//free(traversalOrder);
 }
 
 // frees the maze
@@ -312,23 +321,11 @@ void freeMAZE(MAZE* maze)
 
 	for (int i = 0; i < maze->rows; i++)
 	{
-		//for (int j = 0; j < maze->columns; j++)
-		//{
-			//free(maze->cellHolder[i][j]);
-			//freeCELL(maze->cellHolder[i][j]);
-		//}
+		for (int j = 0; j < maze->columns; j++)
+			free(maze->cellHolder[i][j]);
 		free(maze->cellHolder[i]);
 	}
-
 	free(maze->cellHolder);
-	//for(int x = 0; x < maze->rows; x++)
-	//{
-	//	for (int y = 0; y < maze->columns; x++)
-	//	{
-	//		//free(maze->cellHolder[x][y]);
-	//		freeCELL(maze->cellHolder[x][y]);
-	//	}
-	//}
 	free(maze);
 }
 
@@ -338,23 +335,18 @@ MAZE *newMAZE(int rows, int cols, int seed)
 	MAZE *newMAZE = (MAZE*)malloc(sizeof(MAZE));
 	newMAZE->rows = rows;
 	newMAZE->columns = cols;
-	//printf("Creating a maze of size %d x %d\n", rows, cols);
 	// Create a 1-D array of row pointers
 	newMAZE->cellHolder = malloc(sizeof(void**) * rows);
 	for (int x = 0; x < rows; x++)
 	{
-		//printf("%d", x);
 		// Create each row
 		newMAZE->cellHolder[x] = malloc(sizeof(void*) * cols);
 		for (int y = 0; y < cols; y++)
 		{
 			// Populate it
 			insertCELL(newMAZE, newCELL(x, y), x, y);
-			//printf("%d ", y);
 		}
-		//printf("\n");
 	}
-	//printf("\nCreated maze\n");
 	newMAZE->seed = seed;
 	generateMAZE(newMAZE);
 	return newMAZE;

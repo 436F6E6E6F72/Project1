@@ -9,16 +9,16 @@ File author: Connor Adams
 
 struct cell
 {
-	int xLoc, yLoc, value, state; // for State 0 == normal, -1 == start, 1 == end
+	int xLoc, yLoc, value; // for State 0 == normal, -1 == start, 1 == end
 	bool visited;
-	int *walls; // The walls are stored in an array, North, East, South, West - 1 == exists | 0 == none
+	int walls[4]; // The walls are stored in an array, North, East, South, West - 1 == exists | 0 == none
 };
 
 // Creates a new CELL struct
 CELL *newCELL(int x, int y)
 {
-	CELL *newCELL = (CELL*)malloc(sizeof(CELL*));
-	newCELL->walls = (int*)malloc(sizeof(int*)*4);
+	CELL *newCELL = (CELL*)malloc(sizeof(CELL));
+	//newCELL->walls = (int*)malloc(sizeof(int)*4);
 	// It is possible to store the walls in 2 slots but it makes solving annoying
 	for (int i = 0; i < 4; i++)
 		newCELL->walls[i] = 1;
@@ -120,24 +120,29 @@ void removeWall(CELL *firstCELL, CELL *secondCELL)
 	visitedCELL(secondCELL);
 }
 
-// Frees the cell's data
-void freeCELL(CELL *cell)
+//// Frees the cell's data
+//void freeCELL(CELL *cell)
+//{
+//	free(cell);
+//}
+
+void freeCELL(void *v)
 {
-	free(cell->walls);
-	//free(cell);
+	free((CELL *)v);
 }
+
 
 // Returns the walls as a char* N-E-S-W
 char* wallsCELL(CELL *cell)
 {
-	char* walls = (char*)malloc(sizeof(char*)*5);
+	char* returnWalls = (char*)malloc(sizeof(char) * 5);
 	for (int i = 0; i < 4; i++)
 	{
 		if (cell->walls[i] == 1)
-			walls[i] = '1';
+			returnWalls[i] = '1';
 		else
-			walls[i] = '0';
+			returnWalls[i] = '0';
 	}
-	walls[5] = '\0';
-	return walls;
+	returnWalls[4] = '\0';
+	return returnWalls;
 }

@@ -90,18 +90,15 @@ int ProcessOptions(int argc, char **argv)
 			MAZE *solvedMA = readMAZE(argv[argIndex]);
 			solvedMA = solveMAZE(solvedMA);
 			saveMAZE(solvedMA, argv[argIndex + 1]);
-			free(solvedMA);
-			//freeMAZE(solvedMA);
+			freeMAZE(solvedMA);
 			argsUsed += 2;
 			break;
 		}
 		case 'c':
 		{
 			MAZE *newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
-			//displayMAZE(newMA);
 			saveMAZE(newMA, argv[argIndex+2]);
-			free(newMA);
-			//freeMAZE(newMA);
+			freeMAZE(newMA);
 			argsUsed += 3;
 			break;
 		}
@@ -124,8 +121,8 @@ int ProcessOptions(int argc, char **argv)
 				if (rMAZE != 0)
 				{
 					displayMAZE(rMAZE);
-					free(rMAZE);
 				}
+				freeMAZE(rMAZE);
 			}
 			argsUsed += 1;
 
@@ -150,8 +147,8 @@ int ProcessOptions(int argc, char **argv)
 		if (rMAZE != 0)
 		{
 			displayMAZE(rMAZE);
-			free(rMAZE);
 		}
+		freeMAZE(rMAZE);
 	}
 	return argIndex;
 }

@@ -25,5 +25,5 @@ extern int xCell(CELL*);
 extern int yCell(CELL*);
 extern void removeWall(CELL*, CELL*);
 extern void setValueCELL(CELL*, int);
-extern void freeCELL(CELL*);
+extern void freeCELL(void*);
 #endif
