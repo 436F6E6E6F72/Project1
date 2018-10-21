@@ -44,11 +44,12 @@ void Fatal(char *fmt, ...)
 
 int ProcessOptions(int argc, char **argv)
 {
-	int start, argIndex;
+	int start, argIndex, sizeX = 0, sizeY = 0;
 	int argsUsed;
 	char *arg;
-
-	bool displayAtEnd = false; int argcDisp = 0;
+	MAZE *newMA = NULL;
+	bool displayAtEnd = false; 
+	int argcDisp = 0, argcSolve = -1;
 
 	argIndex = 1;
 
@@ -88,24 +89,46 @@ int ProcessOptions(int argc, char **argv)
 		case 's':
 		{
 			MAZE *solvedMA = readMAZE(argv[argIndex]);
+			if (solvedMA != 0)
+			{
 			solvedMA = solveMAZE(solvedMA);
 			saveMAZE(solvedMA, argv[argIndex + 1]);
 			freeMAZE(solvedMA);
 			argsUsed += 2;
+			}
+			else
+			{
+				argcSolve = argIndex;
+				argsUsed += 2;
+			}
 			break;
 		}
 		case 'c':
 		{
-			MAZE *newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
+			sizeX = atoi(argv[argIndex]); sizeY = atoi(argv[argIndex + 1]);
+			newMA = newMAZE(atoi(argv[argIndex]), atoi(argv[argIndex + 1]), seed);
 			saveMAZE(newMA, argv[argIndex+2]);
 			freeMAZE(newMA);
 			argsUsed += 3;
+			if (argcSolve != -1)
+			{
+				MAZE *solvedMA = readMAZE(argv[argcSolve]);
+				solvedMA = solveMAZE(solvedMA);
+				saveMAZE(solvedMA, argv[argcSolve + 1]);
+				freeMAZE(solvedMA);
+			}
 			break;
 		}
 		case 'r':
 		{
 			seed = atoi(arg);
-			argsUsed += 1; // TODO: VERIFY THESE INCREMENTS
+			if (newMA != NULL)
+			{
+				newMA = newMAZE(sizeX, sizeY, seed);
+				saveMAZE(newMA, argv[argIndex + 2]);
+				freeMAZE(newMA);
+			}
+			argsUsed += 1; 
 			break;
 		}
 		case 'd':
